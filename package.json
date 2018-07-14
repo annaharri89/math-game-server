@@ -1,0 +1,26 @@
+{
+  "name": "math-game-server",
+  "version": "0.0.1",
+  "description": "The server for a demonstration of sockets, used to drive a math game with a global scoreboard.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"no tests written\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annaharri89/math-game-server.git"
+  },
+  "keywords": [
+    "math",
+    "game",
+    "server",
+    "node",
+    "socket.io"
+  ],
+  "author": "Anna Harrison",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/annaharri89/math-game-server/issues"
+  },
+  "homepage": "https://github.com/annaharri89/math-game-server#readme"
+}
