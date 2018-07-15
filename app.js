@@ -3,8 +3,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var server = http.createServer(app);
-var io = require('../..')(server);
-
+var io = require('socket.io')(server);
 
 const hostname = '127.0.0.1';
 const port = process.env.PORT | 3000;
@@ -34,11 +33,11 @@ io.on('connection', function (socket) {
         socket.username = username;
         ++numUsers;
         addedUser = true;
-        socket.$emit('login', {
+        socket.emit('login', {
             numUsers: numUsers
         });
         // echo globally (all clients) that a person has connected
-        socket.$broadcast.$emit('user joined', {
+        socket.broadcast.emit('user joined', {
             username: socket.username,
             numUsers: numUsers
         });
@@ -50,7 +49,7 @@ io.on('connection', function (socket) {
             --numUsers;
 
             // echo globally that this client has left
-            socket.$broadcast.$emit('user left', {
+            socket.broadcast.emit('user left', {
                 username: socket.username,
                 numUsers: numUsers
             });
@@ -62,10 +61,9 @@ io.on('connection', function (socket) {
     var newProblem = function () {
         socket.firstInt = getRandomInt(10000);
         socket.secondInt = getRandomInt(10000);
-        socket.$emit('new problem', {
-            firstInt: firstInt,
-            secondInt: secondInt,
-            problem: firstInt + " + " + secondInt
+        socket.emit('new problem', {
+            firstInt: socket.firstInt,
+            secondInt: socket.secondInt
         })};
 
     //when client emits 'new problem', generate new problem and sends to the user
@@ -77,17 +75,18 @@ io.on('connection', function (socket) {
     // score to everyone
     socket.on('answer', function (data) {
         var correct = false;
-        if (data === socket.firstInt + socket.secondInt) {
+        if (parseInt(data) === socket.firstInt + socket.secondInt) {
             correct = true;
             socket.score++;
         }
-        socket.$emit('evaluation', {
+        socket.emit('evaluation', {
             isCorrect: correct
         });
         if (correct) {
             newProblem();
-            socket.$broadcast.$emit('user score', {
-                message: socket.username + "'s score went up to " + socket.score
+            io.sockets.emit('user score', {
+                username: socket.username,
+                score: socket.score
             });
         }
 
